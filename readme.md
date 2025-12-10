@@ -5,14 +5,8 @@ JM Viewer 是一个采用 Apache 2.0 许可证的开源项目，提供完整的�
 ## 许可证说明
 
 本项目采用 **[Apache License 2.0](./LICENSE)** 开源许可证：
-- ✅ **允许商用**: 可以自由使用于商业用途
-- ✅ **允许修改**: 可以修改源代码并创建衍生作品
-- ✅ **专利授权**: 包含明确的专利授权条款
-- ✅ **版权保留**: 要求保留原始版权声明
-- ❌ **不提供质量保证**: 作者不承担使用责任
-- ❌ **商标不能直接使用**: 不能使用项目名称进行背书
+完整许可条款：[https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
-**许可证具体条款请查看项目中的 `LICENSE` 文件**
 
 ## 功能特性
 
@@ -26,7 +20,7 @@ JM Viewer 是一个采用 Apache 2.0 许可证的开源项目，提供完整的�
 - **双界面设计**: 列表浏览 + 图片查看器
 - **智能筛选**: 支持按标题、作者、标签搜索
 - **高清查看**: 缩放/拖拽/切换翻页方向
-- **AI版本切换**: 原始版本与AI修复版本一键切换
+- **AI版本切换**: 原始版本与修复版本切换
 - **键盘快捷键**: 空格翻页/+-缩放/R键重置
 
 ### 🔄 图片重命名工具 (`rename_images.py`)
@@ -51,7 +45,7 @@ pip install jmcomic
 ```bash
 python download_jm.py
 ```
-![下载器截图](https://via.placeholder.com/600x300?text=Downloader+Interface)
+
 
 ### 2. 使用查看器
 ```bash
@@ -64,7 +58,7 @@ python jm_viewer-2.0.py
   - `+/-`: 缩放图片
   - `R`: 重置视图
   - `ESC/B`: 返回列表
-```
+
 
 ### 3. 整理外部来源
 ```bash
@@ -85,17 +79,3 @@ jm_viewer-2.0/
         ├── 00001.jpg
         ├── 00002.jpg
         └── ai/           # 修复版本目录
-```
-
-## 许可证说明
-
-再次强调，此项目采用 **[Apache License 2.0](./LICENSE)**：
-- 允许自由使用于个人和商业项目
-- 修改后必须保留原始版权声明和许可证
-- 变更必须明确说明
-- 无需公开修改后的源代码
-- 包含专利授权条款
-
-完整许可条款：[https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0)
-
----

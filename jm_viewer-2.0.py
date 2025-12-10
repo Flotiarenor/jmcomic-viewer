@@ -647,6 +647,7 @@ class ComicViewer:
         if event.widget == self.root and hasattr(self, 'viewer_frame') and self.viewer_frame.winfo_viewable():
             if hasattr(self, '_resize_timer'):
                 self.root.after_cancel(self._resize_timer)
+                
             self._resize_timer = self.root.after(100, self.display_image)
 
 def main():
