@@ -376,15 +376,28 @@ class ComicViewer:
         return {}
         
     def get_preview_image(self, comic_path: Path) -> Optional[Image.Image]:
-        """获取预览图片"""
+        """获取预览图片（从第一章或根目录）"""
         image_extensions = ['*.jpg', '*.jpeg', '*.png']
-        for ext in image_extensions:
-            files = list(comic_path.glob(ext))
-            if files:
-                try:
-                    return Image.open(files[0])
-                except Exception:
-                    continue
+        
+        # 先尝试从章节目录获取
+        chapter_dirs = [d for d in comic_path.iterdir() 
+                        if d.is_dir() and not d.name.startswith('.')]
+        
+        search_paths = []
+        if chapter_dirs:
+            # 从第一章目录获取
+            search_paths.append(sorted(chapter_dirs, key=lambda x: x.name)[0])
+        # 也从根目录获取（兼容单章节）
+        search_paths.append(comic_path)
+        
+        for search_path in search_paths:
+            for ext in image_extensions:
+                files = list(search_path.glob(ext))
+                if files:
+                    try:
+                        return Image.open(files[0])
+                    except Exception:
+                        continue
         return None
         
     def open_comic(self, comic_path_str: str):
@@ -401,7 +414,7 @@ class ComicViewer:
         self.show_current_image()
         
     def load_comic_images(self):
-        """加载本子图片"""
+        """加载本子图片（兼容多章节）"""
         if not self.current_comic_dir: 
             return
         
@@ -409,26 +422,38 @@ class ComicViewer:
         self.image_files = []
         current_dir_str = str(self.current_comic_dir)
         
-        for ext in image_extensions:
-            self.image_files.extend(glob.glob(os.path.join(current_dir_str, ext)))
-            self.image_files.extend(glob.glob(os.path.join(current_dir_str, ext.upper())))
+        # 检查是否有多章节目录
+        chapter_dirs = [d for d in Path(current_dir_str).iterdir() 
+                        if d.is_dir() and not d.name.startswith('.')]
         
-        self.image_files = sorted(list(set(self.image_files)))
+        if chapter_dirs:
+            # 多章节模式：按章节顺序收集图片
+            for chapter_dir in sorted(chapter_dirs, key=lambda x: x.name):
+                for ext in image_extensions:
+                    files = glob.glob(os.path.join(str(chapter_dir), ext))
+                    files.extend(glob.glob(os.path.join(str(chapter_dir), ext.upper())))
+                    self.image_files.extend(sorted(files))
+        else:
+            # 单章节模式：直接在根目录找图片
+            for ext in image_extensions:
+                files = glob.glob(os.path.join(current_dir_str, ext))
+                files.extend(glob.glob(os.path.join(current_dir_str, ext.upper())))
+                self.image_files.extend(sorted(files))
+        
+        self.image_files = list(set(self.image_files))  # 去重
+        self.image_files.sort()  # 确保排序
         self.current_image_index = 0
         self.reset_view()
 
-
     def toggle_ai_version(self):
-        """切换到AI处理版本或原始版本"""
+        """切换到AI处理版本或原始版本（保持章节结构）"""
         if not self.current_comic_dir:
             return
         
-        # 设置AI版本路径（在当前目录下创建ai子目录）
         if self.original_comic_dir is None:
             self.original_comic_dir = self.current_comic_dir
-            self.ai_comic_dir = self.current_comic_dir / "ai"  # 假设AI处理后的图片在ai子文件夹中
+            self.ai_comic_dir = self.current_comic_dir / "ai"
         
-        # 切换版本
         if self.is_ai_version:
             # 切换回原始版本
             self.current_comic_dir = self.original_comic_dir
@@ -443,10 +468,15 @@ class ComicViewer:
         
         self.is_ai_version = not self.is_ai_version
         
-        # 重新加载图片
-        image_index = self.current_image_index
+        # 重新加载图片（保持当前浏览位置）
+        current_position_ratio = self.current_image_index / len(self.image_files) if self.image_files else 0
         self.load_comic_images()
-        self.current_image_index = image_index
+        
+        # 尽量保持相同的浏览位置
+        if self.image_files:
+            new_index = int(current_position_ratio * len(self.image_files))
+            self.current_image_index = min(new_index, len(self.image_files) - 1)
+        
         self.show_current_image()
 
     def load_comic_info_display(self):
@@ -456,30 +486,25 @@ class ComicViewer:
         json_path = self.current_comic_dir / "album_info.json"
         info = self.load_comic_info(json_path)
         
+        total_pages = len(self.image_files) if hasattr(self, 'image_files') else 0
+        
         info_lines = [
             f"标题: {info.get('title', '未知')}",
             f"作者: {info.get('author', '未知作者')}",
             f"ID: {info.get('album_id', '未知')}",
-            f"章节: {info.get('chapter_count', 1)} 章",
-            f"页数: {len(self.image_files)} 页",
+            f"页数: {total_pages} 页",
             f"下载时间: {info.get('download_time', '未知')}",
         ]
         
         tags = info.get('tags', [])
         if tags:
             info_lines.append(f"标签: {' '.join(tags)}")
-            
-        chapters = info.get('chapters', [])
-        if chapters:
-            info_lines.append("\n章节信息:")
-            for chapter in chapters:
-                info_lines.append(f"  {chapter.get('title', '未知章节')} ({chapter.get('page_count', 0)} 页)")
         
         self.info_text.config(state=tk.NORMAL)
         self.info_text.delete(1.0, tk.END)
         self.info_text.insert(1.0, "\n".join(info_lines))
         self.info_text.config(state=tk.DISABLED)
-        
+      
     def show_viewer(self):
         """显示查看器界面"""
         self.selection_frame.grid_forget()
@@ -504,23 +529,33 @@ class ComicViewer:
             self.current_image_index += 1
             self.reset_view()
             self.show_current_image()
+        else:
+            pass
 
     def show_current_image(self):
-        """显示当前图片"""
+        """显示当前图片（包含章节信息）"""
         if not self.image_files or self.current_image_index >= len(self.image_files):
             return
             
-        img_name = os.path.basename(self.image_files[self.current_image_index])
-        self.page_info.config(text=f"{self.current_image_index+1}/{len(self.image_files)} ({img_name})")
+        current_image_path = self.image_files[self.current_image_index]
+        img_name = os.path.basename(current_image_path)
+        
+        # 获取当前图片所属章节
+        chapter_info = ""
+        relative_path = os.path.relpath(current_image_path, self.current_comic_dir)
+        path_parts = Path(relative_path).parts
+        if len(path_parts) > 1:
+            chapter_info = f" [{path_parts[0]}]"
+        
+        self.page_info.config(text=f"{self.current_image_index+1}/{len(self.image_files)}{chapter_info} ({img_name})")
         
         try:
-            # 使用 pathlib
-            image_path = Path(self.image_files[self.current_image_index])
+            image_path = Path(current_image_path)
             self.current_image = Image.open(image_path)
             self.display_image()
         except Exception as e:
             print(f"加载图片失败: {e}")
-            
+        
     def display_image(self):
         """在Canvas上显示当前图片"""
         if not self.current_image:
