@@ -1,0 +1,305 @@
+/* --- 1. 全局与重置 --- */
+:root {
+    --bg-primary: #f3f3f3; /* 主背景色，类似Win10/11 */
+    --bg-secondary: #ffffff; /* 次要背景，如内容区、侧边栏 */
+    --text-primary: #000000;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --accent-color: #0078d4; /* Windows蓝 */
+    --hover-bg: #e9ecef;
+    --sidebar-width: 240px;
+    --header-height: 48px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+    user-select: none; /* 模拟原生应用，默认不可选中文本 */
+}
+
+/* --- 2. 主布局 (Flexbox) --- */
+.app-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* --- 3. 左侧导航栏 --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    flex-shrink: 0;
+}
+.sidebar.collapsed {
+    width: 48px;
+}
+
+.sidebar-header {
+    padding: 10px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height);
+}
+.sidebar.collapsed .sidebar-header span {
+    display: none;
+}
+
+.nav-menu {
+    flex-grow: 1;
+    padding-top: 10px;
+}
+
+.nav-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px; /* 图标和文字间距 */
+    position: relative;
+    transition: background-color 0.2s;
+}
+.nav-item:hover {
+    background-color: var(--hover-bg);
+}
+.nav-item.active {
+    background-color: var(--accent-color);
+    color: white;
+}
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: white;
+}
+.nav-item .icon {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+.sidebar.collapsed .nav-item .text {
+    display: none;
+}
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+}
+
+.nav-badge {
+    margin-left: auto;
+    background-color: #d9534f;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+.sidebar.collapsed .nav-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+/* --- 4. 右侧主内容区 --- */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.main-header {
+    height: var(--header-height);
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+}
+
+.search-box {
+    flex-grow: 1;
+    max-width: 500px;
+}
+.search-box input {
+    width: 100%;
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+}
+.search-box input:focus {
+    outline: 1px solid var(--accent-color);
+}
+
+.view-toggle {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.view-toggle button {
+    background-color: var(--bg-secondary);
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+.view-toggle button.active {
+    background-color: var(--accent-color);
+    color: white;
+}
+.view-toggle button:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}
+
+.content-area {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto; /* 允许内容区滚动 */
+    background-color: var(--bg-primary);
+}
+
+/* --- 5. 视图内容 --- */
+.view {
+    display: none; /* 默认隐藏所有视图 */
+}
+.view.active {
+    display: block; /* 显示激活的视图 */
+}
+
+/* 漫画库视图 */
+.library-view {
+    display: flex; /* 覆盖默认的display: none */
+    gap: 20px;
+}
+.library-view.active {
+    display: flex;
+}
+
+.filter-panel {
+    width: 200px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 16px;
+    height: fit-content;
+    flex-shrink: 0;
+}
+.filter-panel h4 {
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.filter-panel ul {
+    list-style: none;
+}
+.filter-panel li {
+    padding: 6px 0;
+    cursor: pointer;
+    font-size: 14px;
+}
+.filter-panel li:hover {
+    color: var(--accent-color);
+}
+
+.manga-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    flex-grow: 1;
+}
+.manga-item {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+}
+.manga-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.manga-item img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+.manga-item p {
+    padding: 8px;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 其他视图 (简化) */
+.placeholder-view {
+    text-align: center;
+    margin-top: 50px;
+    color: var(--text-secondary);
+}
+.placeholder-view h2 {
+    font-weight: normal;
+}
+
+/* 用户面板 */
+.user-panel {
+    position: absolute;
+    top: var(--header-height);
+    right: 20px;
+    width: 250px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 16px;
+    display: none; /* 默认隐藏 */
+    z-index: 1000;
+}
+.user-panel.active {
+    display: block;
+}
+.user-panel h4 {
+    margin-bottom: 16px;
+}
+.user-panel ul {
+    list-style: none;
+}
+.user-panel li {
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+.user-panel li:last-child {
+    border-bottom: none;
+}
+.user-panel li:hover {
+    color: var(--accent-color);
+}
+
+/* --- 6. 工具类 --- */
+.is-hidden {
+    display: none !important;
+}

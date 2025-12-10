@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人数字漫画库</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入外部CSS文件 -->
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span>漫画库</span>
+                <button id="sidebar-toggle-btn">☰</button>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active" data-view="library-view">
+                    <span class="icon">📚</span>
+                    <span class="text">漫画库</span>
+                </div>
+                <div class="nav-item" data-view="library-view">
+                    <span class="icon">⭐</span>
+                    <span class="text">收藏夹</span>
+                </div>
+                <div class="nav-item" data-view="library-view">
+                    <span class="icon">🕐</span>
+                    <span class="text">最近阅读</span>
+                </div>
+                <div class="nav-item" data-view="download-view">
+                    <span class="icon">⬇️</span>
+                    <span class="text">下载中心</span>
+                    <span class="nav-badge">3</span>
+                </div>
+                <div class="nav-item" data-view="recommend-view">
+                    <span class="icon">🌐</span>
+                    <span class="text">推荐</span>
+                </div>
+                <div class="nav-item" id="user-menu-trigger">
+                    <span class="icon">👤</span>
+                    <span class="text">用户</span>
+                </div>
+                <div class="nav-item" data-view="settings-view">
+                    <span class="icon">⚙️</span>
+                    <span class="text">设置</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 右侧主内容区 -->
+        <main class="main-content">
+            <!-- 顶部栏 -->
+            <header class="main-header">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="搜索漫画、作者、标签...">
+                </div>
+                <div class="view-toggle" id="view-toggle">
+                    <button class="active" data-view-mode="grid">网格</button>
+                    <button data-view-mode="list">列表</button>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <div class="content-area">
+                <!-- 漫画库视图 -->
+                <div class="view library-view active" id="library-view">
+                    <aside class="filter-panel">
+                        <h4>标签</h4>
+                        <ul>
+                            <li>热血</li>
+                            <li>冒险</li>
+                            <li>搞笑</li>
+                            <li>科幻</li>
+                        </ul>
+                        <h4 style="margin-top: 20px;">作者</h4>
+                        <ul>
+                            <li>尾田荣一郎</li>
+                            <li>鸟山明</li>
+                        </ul>
+                        <h4 style="margin-top: 20px;">阅读状态</h4>
+                        <ul>
+                            <li>未读</li>
+                            <li>在读</li>
+                            <li>已完成</li>
+                        </ul>
+                    </aside>
+                    <div class="manga-grid" id="manga-grid">
+                        <!-- JS 动态生成漫画项 -->
+                    </div>
+                </div>
+
+                <!-- 下载中心视图 -->
+                <div class="view placeholder-view" id="download-view">
+                    <h2>下载中心</h2>
+                    <p>这里将显示所有下载任务。</p>
+                </div>
+
+                <!-- 推荐视图 -->
+                <div class="view placeholder-view" id="recommend-view">
+                    <h2>推荐</h2>
+                    <p>发现更多精彩漫画。</p>
+                </div>
+                
+                <!-- 设置视图 -->
+                <div class="view placeholder-view" id="settings-view">
+                    <h2>设置</h2>
+                    <p>配置你的漫画库。</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 用户面板 (悬浮) -->
+    <div class="user-panel" id="user-panel">
+        <h4>用户中心</h4>
+        <ul>
+            <li>阅读统计</li>
+            <li>主题切换</li>
+            <li>关于</li>
+        </ul>
+    </div>
+
+    <!-- 在body末尾引入外部JS文件，确保DOM已加载 -->
+    <script src="script.js"></script>
+</body>
+</html>

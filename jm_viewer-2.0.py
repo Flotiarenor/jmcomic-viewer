@@ -444,8 +444,6 @@ class ComicViewer:
         self.current_image_index = 0
         self.reset_view()
 
-
-
     def toggle_ai_version(self):
         """切换到AI处理版本或原始版本（保持章节结构）"""
         if not self.current_comic_dir:
