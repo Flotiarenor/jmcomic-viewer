@@ -414,41 +414,36 @@ class ComicViewer:
         self.show_current_image()
         
     def load_comic_images(self):
-        from natsort import natsorted
         """加载本子图片（兼容多章节，使用自然排序）"""
         if not self.current_comic_dir: 
             return
         
+        from natsort import natsorted
         image_extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif', '*.bmp', '*.webp']
         self.image_files = []
-        current_dir_str = str(self.current_comic_dir)
+        current_dir = Path(self.current_comic_dir)
         
         # 检查是否有多章节目录
-        chapter_dirs = [d for d in Path(current_dir_str).iterdir() 
+        chapter_dirs = [d for d in current_dir.iterdir() 
                         if d.is_dir() and not d.name.startswith('.')]
         
         if chapter_dirs:
-            # 多章节模式：使用自然排序
-            sorted_chapters = natsorted(chapter_dirs, key=lambda x: x.name)
-            
-            for chapter_dir in sorted_chapters:
+            # 多章节模式
+            for chapter_dir in natsorted(chapter_dirs):
                 chapter_files = []
                 for ext in image_extensions:
-                    files = glob.glob(os.path.join(str(chapter_dir), ext))
-                    files.extend(glob.glob(os.path.join(str(chapter_dir), ext.upper())))
-                    chapter_files.extend(files)
-                # 章节内图片也使用自然排序
-                chapter_files = natsorted(chapter_files)
-                self.image_files.extend(chapter_files)
+                    chapter_files.extend(chapter_dir.glob(ext))
+                self.image_files.extend(natsorted(chapter_files))
         else:
             # 单章节模式
+            all_files = []
             for ext in image_extensions:
-                files = glob.glob(os.path.join(current_dir_str, ext))
-                files.extend(glob.glob(os.path.join(current_dir_str, ext.upper())))
-                self.image_files.extend(natsorted(files))
+                all_files.extend(current_dir.glob(ext))
+            self.image_files = natsorted(all_files)
         
         self.current_image_index = 0
         self.reset_view()
+
 
 
     def toggle_ai_version(self):
