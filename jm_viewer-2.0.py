@@ -414,7 +414,8 @@ class ComicViewer:
         self.show_current_image()
         
     def load_comic_images(self):
-        """加载本子图片（兼容多章节）"""
+        from natsort import natsorted
+        """加载本子图片（兼容多章节，使用自然排序）"""
         if not self.current_comic_dir: 
             return
         
@@ -427,23 +428,28 @@ class ComicViewer:
                         if d.is_dir() and not d.name.startswith('.')]
         
         if chapter_dirs:
-            # 多章节模式：按章节顺序收集图片
-            for chapter_dir in sorted(chapter_dirs, key=lambda x: x.name):
+            # 多章节模式：使用自然排序
+            sorted_chapters = natsorted(chapter_dirs, key=lambda x: x.name)
+            
+            for chapter_dir in sorted_chapters:
+                chapter_files = []
                 for ext in image_extensions:
                     files = glob.glob(os.path.join(str(chapter_dir), ext))
                     files.extend(glob.glob(os.path.join(str(chapter_dir), ext.upper())))
-                    self.image_files.extend(sorted(files))
+                    chapter_files.extend(files)
+                # 章节内图片也使用自然排序
+                chapter_files = natsorted(chapter_files)
+                self.image_files.extend(chapter_files)
         else:
-            # 单章节模式：直接在根目录找图片
+            # 单章节模式
             for ext in image_extensions:
                 files = glob.glob(os.path.join(current_dir_str, ext))
                 files.extend(glob.glob(os.path.join(current_dir_str, ext.upper())))
-                self.image_files.extend(sorted(files))
+                self.image_files.extend(natsorted(files))
         
-        self.image_files = list(set(self.image_files))  # 去重
-        self.image_files.sort()  # 确保排序
         self.current_image_index = 0
         self.reset_view()
+
 
     def toggle_ai_version(self):
         """切换到AI处理版本或原始版本（保持章节结构）"""
