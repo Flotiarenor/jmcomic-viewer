@@ -327,11 +327,9 @@ class ComicViewer:
         
         preview_image = self.get_preview_image(comic_path)
         if preview_image:
-            # 注意：此处的 list_zoom_label 是用于封面缩放的，需要单独实现
-            # 此处保留原始逻辑，您可以后续添加封面缩放
             preview_photo = ImageTk.PhotoImage(preview_image.resize((100, 140), Image.Resampling.LANCZOS))
             preview_label = ttk.Label(item_frame, image=preview_photo)
-            preview_label.image = preview_photo  # 保持引用
+            preview_label.image = preview_photo
             preview_label.pack(side=tk.LEFT, padx=5)
         else:
             placeholder = ttk.Label(item_frame, text="无预览", width=15)
@@ -351,19 +349,29 @@ class ComicViewer:
             tags_label = ttk.Label(info_frame, text=f"标签: {tags_text}")
             tags_label.pack(anchor="w")
         
-        try:
-             total_pages = len(list(comic_path.glob('*.*'))) - 1 # 减去json
-        except:
-             total_pages = 0
+        # --- 修改开始 ---
+        # 直接从JSON信息中获取 'total_page_count'
+        total_pages = info.get('total_page_count', 0) # 如果不存在，默认为0
         pages_label = ttk.Label(info_frame, text=f"页数: {total_pages}")
         pages_label.pack(anchor="w")
-        
+        # --- 修改结束 ---
+
+        # 优化事件绑定，确保点击任何子元素都能触发
+        # (这个改动虽然不是直接针对JSON，但能改善代码健壮性)
         def on_click(event=None):
-            self.open_comic(str(comic_path))
-            
-        item_frame.bind("<Button-1>", on_click)
-        for child in item_frame.winfo_children():
-            child.bind("<Button-1>", on_click)
+            # event参数被Tkinter自动传入，我们这里用不到它，但保留它是好习惯
+            self.open_comic(comic_data['path']) # 直接使用 comic_data['path']
+
+        # 为整个框架及其所有子元素绑定点击事件
+        self._bind_click_recursively(item_frame, on_click)
+
+    # 辅助函数：递归地为一个widget及其所有子元素绑定命令
+    def _bind_click_recursively(self, widget, command):
+        """递归绑定点击事件"""
+        widget.bind("<Button-1>", command)
+        for child in widget.winfo_children():
+            self._bind_click_recursively(child, command)
+
             
     def load_comic_info(self, json_path: Path):
         """加载本子信息"""
@@ -444,8 +452,6 @@ class ComicViewer:
         self.current_image_index = 0
         self.reset_view()
 
-
-
     def toggle_ai_version(self):
         """切换到AI处理版本或原始版本（保持章节结构）"""
         if not self.current_comic_dir:
@@ -487,7 +493,13 @@ class ComicViewer:
         json_path = self.current_comic_dir / "album_info.json"
         info = self.load_comic_info(json_path)
         
-        total_pages = len(self.image_files) if hasattr(self, 'image_files') else 0
+        # 优先从JSON获取页数，如果JSON中没有，则回退到计算实际文件数
+        total_pages_from_json = info.get('total_page_count')
+        if total_pages_from_json is not None and isinstance(total_pages_from_json, int):
+            total_pages = total_pages_from_json
+        else:
+            # 回退方案：计算实际加载的图片文件数
+            total_pages = len(self.image_files) if hasattr(self, 'image_files') else 0
         
         info_lines = [
             f"标题: {info.get('title', '未知')}",
