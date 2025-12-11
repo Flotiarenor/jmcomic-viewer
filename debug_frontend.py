@@ -11,6 +11,11 @@ class MockAPI:
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.cover_dir = os.path.join(self.base_path, "test", "cover")
         os.makedirs(self.cover_dir, exist_ok=True)
+        self.filter_data = {
+            "tags": ["萝莉", "恋爱"],
+            "authors": ["武藤まと", "ユイザキカズヤ"],
+            "read_statuses": ["unread", "reading", "completed"]
+        }
         
         # 漫画数据
         self.comics_data = [
@@ -73,6 +78,22 @@ class MockAPI:
                 if os.path.exists(cover_path):
                     return cover_path
         return None
+    def get_filter_options(self):
+        """获取筛选器选项"""
+        print("API调用: get_filter_options")
+        return self.filter_data
+    def filter_comics(self, filter_type, filter_value):
+        """根据筛选条件过滤漫画"""
+        print(f"API调用: filter_comics, 类型: {filter_type}, 值: {filter_value}")
+        
+        if filter_type == "tag":
+            return self.comics_data
+        elif filter_type == "author":
+            return [c for c in self.comics_data if c['author'] == filter_value]
+        elif filter_type == "status":
+            return [c for c in self.comics_data if c['read_status'] == filter_value]
+        else:
+            return self.comics_data
 
 # 创建Flask应用
 def create_image_server():

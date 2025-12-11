@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人数字漫画库</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
     <div class="app-container">
         <!-- 左侧导航栏 -->
         <aside class="sidebar" id="sidebar">
@@ -55,10 +54,6 @@
                 <div class="search-box">
                     <input type="text" id="search-input" placeholder="搜索漫画、作者、标签...">
                 </div>
-                <div class="view-toggle" id="view-toggle">
-                    <button class="active" data-view-mode="grid">网格</button>
-                    <button data-view-mode="list">列表</button>
-                </div>
             </header>
 
             <!-- 内容区 -->
@@ -67,25 +62,13 @@
                 <div class="view library-view active" id="library-view">
                     <aside class="filter-panel">
                         <h4>标签</h4>
-                        <ul>
-                            <li>热血</li>
-                            <li>冒险</li>
-                            <li>搞笑</li>
-                            <li>科幻</li>
-                        </ul>
+                        <ul id="tag-list"></ul>
                         <h4 style="margin-top: 20px;">作者</h4>
-                        <ul>
-                            <li>尾田荣一郎</li>
-                            <li>鸟山明</li>
-                        </ul>
+                        <ul id="author-list"></ul>
                         <h4 style="margin-top: 20px;">阅读状态</h4>
-                        <ul>
-                            <li>未读</li>
-                            <li>在读</li>
-                            <li>已完成</li>
-                        </ul>
+                        <ul id="status-list"></ul>
                     </aside>
-                    <div class="manga-grid" id="manga-grid">
+                    <div class="manga-grid fixed-grid" id="manga-grid">
                         <!-- JS 动态生成漫画项 -->
                     </div>
                 </div>
@@ -93,25 +76,25 @@
                 <!-- 收藏夹视图 -->
                 <div class="view" id="favorites-view">
                     <h2>我的收藏</h2>
-                    <p>这里显示你收藏的漫画。</p>
+                    <div class="manga-grid fixed-grid" id="favorites-grid"></div>
                 </div>
 
                 <!-- 最近阅读视图 -->
                 <div class="view" id="recent-view">
                     <h2>最近阅读</h2>
-                    <p>你最近读过的漫画会出现在这里。</p>
+                    <div class="manga-grid fixed-grid" id="recent-grid"></div>
                 </div>
 
                 <!-- 下载中心视图 -->
                 <div class="view" id="download-view">
                     <h2>下载中心</h2>
-                    <p>当前下载任务数：<strong>3</strong></p>
+                    <div class="download-list" id="download-list"></div>
                 </div>
 
                 <!-- 推荐视图 -->
                 <div class="view" id="recommend-view">
                     <h2>为你推荐</h2>
-                    <p>发现更多优秀漫画。</p>
+                    <div class="manga-grid fixed-grid" id="recommend-grid"></div>
                 </div>
 
                 <!-- 用户视图 -->
@@ -140,6 +123,9 @@
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
