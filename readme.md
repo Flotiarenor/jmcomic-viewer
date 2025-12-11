@@ -74,15 +74,15 @@ jm_viewer-2.0/
 ├── rename_images.py      # 图片重命名
 ├── config.json           # 标签配置文件(自定义的标签列表)
 └── comics/               # 单章节存储目录
-    └── [comic_id]/
-        ├── album_info.json
-        ├── 00001.jpg
-        ├── 00002.jpg
-        └── ai/           # 修复版本目录
+    ├── [comic_id]/
+    │   ├── album_info.json
+    │   ├── 00001.jpg
+    │   ├── 00002.jpg
+    │   └── ai/           # 修复版本目录
     └── [comic_id]/       # 多章节存储目录
-        ├──[章节]
-        │    ├── 00001.jpg
-        │    └── 00002.jpg
-        └── album_info.json
+        ├── album_info.json
+        └──[章节]
+            ├── 00001.jpg
+            └── 00002.jpg
 
 
