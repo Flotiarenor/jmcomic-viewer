@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人数字漫画库</title>
     <link rel="stylesheet" href="style.css">
-    <!-- 引入外部CSS文件 -->
 </head>
 <body>
 
@@ -21,11 +20,11 @@
                     <span class="icon">📚</span>
                     <span class="text">漫画库</span>
                 </div>
-                <div class="nav-item" data-view="library-view">
+                <div class="nav-item" data-view="favorites-view">
                     <span class="icon">⭐</span>
                     <span class="text">收藏夹</span>
                 </div>
-                <div class="nav-item" data-view="library-view">
+                <div class="nav-item" data-view="recent-view">
                     <span class="icon">🕐</span>
                     <span class="text">最近阅读</span>
                 </div>
@@ -38,7 +37,7 @@
                     <span class="icon">🌐</span>
                     <span class="text">推荐</span>
                 </div>
-                <div class="nav-item" id="user-menu-trigger">
+                <div class="nav-item" data-view="user-view">
                     <span class="icon">👤</span>
                     <span class="text">用户</span>
                 </div>
@@ -91,38 +90,56 @@
                     </div>
                 </div>
 
+                <!-- 收藏夹视图 -->
+                <div class="view" id="favorites-view">
+                    <h2>我的收藏</h2>
+                    <p>这里显示你收藏的漫画。</p>
+                </div>
+
+                <!-- 最近阅读视图 -->
+                <div class="view" id="recent-view">
+                    <h2>最近阅读</h2>
+                    <p>你最近读过的漫画会出现在这里。</p>
+                </div>
+
                 <!-- 下载中心视图 -->
-                <div class="view placeholder-view" id="download-view">
+                <div class="view" id="download-view">
                     <h2>下载中心</h2>
-                    <p>这里将显示所有下载任务。</p>
+                    <p>当前下载任务数：<strong>3</strong></p>
                 </div>
 
                 <!-- 推荐视图 -->
-                <div class="view placeholder-view" id="recommend-view">
-                    <h2>推荐</h2>
-                    <p>发现更多精彩漫画。</p>
+                <div class="view" id="recommend-view">
+                    <h2>为你推荐</h2>
+                    <p>发现更多优秀漫画。</p>
                 </div>
-                
+
+                <!-- 用户视图 -->
+                <div class="view" id="user-view">
+                    <div class="user-view">
+                        <h2>用户中心</h2>
+                        <ul>
+                            <li>阅读统计</li>
+                            <li>主题切换</li>
+                            <li>关于</li>
+                        </ul>
+                    </div>
+                </div>
+
                 <!-- 设置视图 -->
-                <div class="view placeholder-view" id="settings-view">
+                <div class="view" id="settings-view">
                     <h2>设置</h2>
-                    <p>配置你的漫画库。</p>
+                    <ul>
+                        <li>通用设置</li>
+                        <li>外观与主题</li>
+                        <li>快捷键设置</li>
+                        <li>数据备份</li>
+                    </ul>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- 用户面板 (悬浮) -->
-    <div class="user-panel" id="user-panel">
-        <h4>用户中心</h4>
-        <ul>
-            <li>阅读统计</li>
-            <li>主题切换</li>
-            <li>关于</li>
-        </ul>
-    </div>
-
-    <!-- 在body末尾引入外部JS文件，确保DOM已加载 -->
     <script src="script.js"></script>
 </body>
 </html>

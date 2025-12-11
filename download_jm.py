@@ -8,16 +8,14 @@ class AlbumDownloader:
         self.download_dir = download_dir
         self.album_id = None
         
-    def create_option(self, base_dir=None, is_multi_chapter=True):
-        """创建下载配置，支持根据章节数量选择目录规则"""
+    def create_option(self, base_dir=None, is_multi_chapter=False):
+        """创建下载配置，根据是否多章节选择目录规则"""
         if base_dir is None:
             base_dir = self.download_dir
 
-        # 根据是否多章节选择不同的目录规则
-        if is_multi_chapter:
-            dir_rule = "Bd / Pindextitle"  # 多章节：每个章节一个文件夹
-        else:
-            dir_rule = "Bd"  # 单章节：所有图片直接放在根目录
+        # 多章节：Bd / Pindextitle (每个章节一个文件夹)
+        # 单章节：Bd (所有图片直接放在根目录)
+        dir_rule = "Bd / Pindextitle" if is_multi_chapter else "Bd"
 
         option_dict = {
             "dir_rule": {
@@ -37,30 +35,45 @@ class AlbumDownloader:
             }
         }
         return jmcomic.JmOption.construct(option_dict)
-
     
     def save_album_info_to_json(self, album_detail, folder_path: str):
         """保存本子信息到JSON文件"""
         try:
             # 兼容传入单个album对象或列表的情况
-            if not isinstance(album_detail, list):
-                album_detail = [album_detail]
+            if isinstance(album_detail, (list, tuple)):
+                album = album_detail[0]
+            else:
+                album = album_detail
                 
-            album = album_detail[0]
             album_id = str(getattr(album, 'album_id', 'unknown'))
-            name = getattr(album, 'oname', '未知标题')
-            title = getattr(album, 'name', '未知主标题')
+            oname = getattr(album, 'oname', 'unknown')
+            actors = getattr(album, 'actors', 'None')
+            title = getattr(album, 'title', '未知主标题')
             author = getattr(album, 'author', '未知作者')
             tags = list(getattr(album, 'tags', []))
+            
+            # 获取章节信息
+            chapters = []
+            if hasattr(album, 'chapter_list') and album.chapter_list:
+                for chap in album.chapter_list:
+                    chapters.append({
+                        'chapter_id': getattr(chap, 'chapter_id', ''),
+                        'title': getattr(chap, 'name', ''),
+                        'page_count': len(getattr(chap, 'photo_list', []))
+                    })
         except Exception as e:
             print(f"提取本子信息出错: {e}")
             return False
 
         info = {
+            "oname": oname,
             "album_id": album_id,
+            "actors": actors,
             "title": title,
             "author": author,
             "tags": tags,
+            "chapter_count": len(chapters),
+            "chapters": chapters,
             "download_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         }
 
@@ -73,7 +86,6 @@ class AlbumDownloader:
         except Exception as e:
             print(f"保存JSON信息失败: {e}")
             return False
-
 
     def update_album_info_only(self, album_id):
         """仅获取并保存本子信息，不下载图片"""
@@ -89,36 +101,37 @@ class AlbumDownloader:
             print(f"获取本子信息失败: {e}")
             return False
 
-    def save_album_info_to_json(self, album_detail, folder_path: str):
-        """保存本子信息到JSON文件"""
-        try:
-            album_id = str(getattr(album_detail[0], 'album_id', 'unknown'))
-            name = getattr(album_detail[0], 'oname', '未知标题')
-            title = getattr(album_detail[0], 'name', '未知主标题')
-            author = getattr(album_detail[0], 'author', '未知作者')
-            tags = list(getattr(album_detail[0], 'tags', []))
-        except Exception as e:
-            print(f"提取本子信息出错: {e}")
-            return False
+    def download_album(self, album_id, download_dir=None):
+        """智能下载本子，自动检测是否多章节"""
+        if download_dir is None:
+            download_dir = os.path.join(self.download_dir, album_id)
+        os.makedirs(download_dir, exist_ok=True)
 
-        info = {
-            "album_id": album_id,
-            "title": title,
-            "author": author,
-            "tags": tags,
-            "download_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        }
-
-        json_path = os.path.join(folder_path, "album_info.json")
         try:
-            with open(json_path, 'w', encoding='utf-8') as f:
-                json.dump(info, f, ensure_ascii=False, indent=2, default=str)
-            print(f"本子信息已保存到: {json_path}")
+            # 先获取专辑详情来检测章节数
+            temp_option = self.create_option()
+            client = temp_option.build_jm_client()
+            album_detail = client.get_album_detail(album_id)
+            
+            # 检测章节数量
+            chapter_count = len(getattr(album_detail, 'chapter_list', []))
+            is_multi_chapter = chapter_count > 1
+            
+            print(f"本子 {album_id} 共有 {chapter_count} 个章节")
+            
+            # 根据章节数量创建合适的配置
+            option = self.create_option(download_dir, is_multi_chapter=is_multi_chapter)
+            
+            print(f"开始下载本子 {album_id} ...")
+            album = jmcomic.download_album(album_id, option)
+            print(f"本子 {album_id} 下载完成！保存在: {download_dir}")
+            
+            # 保存信息
+            self.save_album_info_to_json(album, download_dir)
             return True
         except Exception as e:
-            print(f"保存JSON信息失败: {e}")
+            print(f"下载失败: {str(e)}")
             return False
-
 
     def get_album_id_from_user(self):
         """从用户输入获取本子ID"""
@@ -168,7 +181,7 @@ class AlbumDownloader:
             elif choice == "1":
                 album_id = self.get_album_id_from_user()
                 if album_id:
-                    self.download_album_to_single_folder(album_id)
+                    self.download_album(album_id)
             elif choice == "2":
                 album_id = self.get_album_id_from_user()
                 if album_id:
