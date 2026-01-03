@@ -20,18 +20,18 @@ logging.basicConfig(
 # 引入插件模块
 try:
     from PageCountPlugin import PageCountPlugin
-    PLUGIN_AVAILABLE = True
+    plug_available = True
 except ImportError:
-    PLUGIN_AVAILABLE = False
+    plug_available = False
     logging.warning("PageCountPlugin 未找到，将使用基础统计方法")
 
 class AlbumDownloader:
-    def __init__(self, download_dir="./本子"):
+    def __init__(self, download_dir: str="./本子"):
         self.download_dir = os.path.abspath(download_dir)
         self._client = None
         self._ensure_download_dir()
         
-        if PLUGIN_AVAILABLE:
+        if plug_available:
             JmModuleConfig.register_plugin(PageCountPlugin)
 
     def _ensure_download_dir(self):
@@ -52,7 +52,7 @@ class AlbumDownloader:
 
         dir_rule = "Bd / Pindextitle" if is_multi_chapter else "Bd"
 
-        option_dict = {
+        option_dict: = {
             "dir_rule": {
                 "base_dir": base_dir,
                 "rule": dir_rule
@@ -71,7 +71,7 @@ class AlbumDownloader:
         }
         
         # 如果插件可用，添加插件配置
-        if PLUGIN_AVAILABLE:
+        if plug_available:
             option_dict["plugins"] = {
                 "before_album": [{"plugin": "page_counter"}],
                 "before_photo": [{"plugin": "page_counter"}]
@@ -148,7 +148,7 @@ class AlbumDownloader:
             album = jmcomic.download_album(album_id, option)
 
             # 获取真实页数
-            if PLUGIN_AVAILABLE:
+            if plug_available:
                 real_page_count = PageCountPlugin.get_total_pages(album_id)
                 PageCountPlugin.reset(album_id)
             else:

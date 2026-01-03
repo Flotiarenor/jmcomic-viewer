@@ -12,7 +12,7 @@ class MockAPI:
         self.cover_dir = os.path.join(self.base_path, "test", "cover")
         os.makedirs(self.cover_dir, exist_ok=True)
         self.filter_data = {
-            "tags": ["萝莉", "恋爱"],
+            "tags": ["萝莉", "恋爱","纯爱","兽耳","巨乳","贫乳"],
             "authors": ["武藤まと", "ユイザキカズヤ"],
             "read_statuses": ["unread", "reading", "completed"]
         }
@@ -23,6 +23,7 @@ class MockAPI:
                 "id": 1,
                 "comic_id": "187420",
                 "title": "[黑暗大法师个人整合] [武藤まと] こあくまは小动物 + 4Pリーフレット",
+                "tags": ["个人整合","萝莉","剧情向","纯爱","彩页","兽耳","兽娘","连裤袜","和服","后宫","其他校服","黑肉","贫乳","群交","过膝袜","校服","口交","中文","彩页","萝莉"],
                 "author": "武藤まと",
                 "cover_url": "http://127.0.0.1:18080/api/cover/187420",
                 "page_count": 199,
@@ -33,6 +34,7 @@ class MockAPI:
                 "id": 2,
                 "comic_id": "1197224",
                 "title": "无表情系女友的发情开关",
+                "tags":["巨乳","美乳","校服","口交","乳交","中文"],
                 "author": "ユイザキカズヤ",
                 "cover_url": "http://127.0.0.1:18080/api/cover/1197224",
                 "page_count": 59,
@@ -87,7 +89,7 @@ class MockAPI:
         print(f"API调用: filter_comics, 类型: {filter_type}, 值: {filter_value}")
         
         if filter_type == "tag":
-            return self.comics_data
+            return [c for c in self.comics_data if filter_value in c['tags']== filter_value]
         elif filter_type == "author":
             return [c for c in self.comics_data if c['author'] == filter_value]
         elif filter_type == "status":
