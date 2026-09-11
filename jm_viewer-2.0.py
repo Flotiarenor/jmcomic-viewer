@@ -38,17 +38,19 @@ class ComicViewer:
         
         # --- 缩放和拖动相关状态 ---
         self.scale_factor: float = 1.0
-        self.drag_start_x: int = 0
-        self.drag_start_y: int = 0
-        self.image_offset_x: int = 0
-        self.image_offset_y: int = 0
-        self.original_offset_x: int = 0
-        self.original_offset_y: int = 0
+        self.drag_start_x: float = 0
+        self.drag_start_y: float = 0
+        self.image_offset_x: float = 0
+        self.image_offset_y: float = 0
+        self.original_offset_x: float = 0
+        self.original_offset_y: float = 0
         
         # --- 搜索和筛选相关状态 ---
         self.all_comics_data: List[Dict[str, Any]] = []  # 存储所有本子数据
         self.filtered_comics_data: List[Dict[str, Any]] = []  # 存储筛选后的本子数据
         self.current_tags: Set[str] = set()  # 当前选择的标签
+
+
         
         # --- UI 事件绑定 ---
         self.root.after(1, self._setup_ui_and_load) # 延迟调用以避免初始化问题
@@ -331,7 +333,7 @@ class ComicViewer:
             # 此处保留原始逻辑，您可以后续添加封面缩放
             preview_photo = ImageTk.PhotoImage(preview_image.resize((100, 140), Image.Resampling.LANCZOS))
             preview_label = ttk.Label(item_frame, image=preview_photo)
-            preview_label.image = preview_photo  # 保持引用
+            preview_label.image= preview_photo  # 保持引用
             preview_label.pack(side=tk.LEFT, padx=5)
         else:
             placeholder = ttk.Label(item_frame, text="无预览", width=15)
@@ -662,8 +664,8 @@ class ComicViewer:
                 
     def on_mouse_release(self, event):
         """鼠标释放"""
-        self.drag_start_x = None
-        self.drag_start_y = None
+        self.drag_start_x = 0
+        self.drag_start_y = 0
         
     def on_key_press(self, event):
         """键盘按键处理"""
