@@ -1,0 +1,5 @@
+本子
+env
+*.log
+test
+__pycache__/

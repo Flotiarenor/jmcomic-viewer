@@ -1,0 +1,61 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本子查看器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. 漫画选择界面 -->
+    <div id="selection-view" class="view active">
+        <div class="container">
+            <div class="search-filter-panel">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="搜索标题、作者或ID...">
+                    <button id="clear-filter-btn">清除筛选</button>
+                </div>
+                <div id="tags-container" class="tags-container">
+                    <!-- 标签按钮将由JS动态生成 -->
+                </div>
+            </div>
+            <div id="comics-list" class="comics-list">
+                <!-- 漫画项目将由JS动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 漫画查看器界面 -->
+    <div id="viewer-view" class="view">
+        <div class="toolbar">
+            <button id="back-to-list-btn">返回列表</button>
+            <div class="nav-buttons">
+                <button id="prev-page-btn">上一页</button>
+                <button id="next-page-btn">下一页</button>
+            </div>
+            <div class="zoom-buttons">
+                <button id="zoom-in-btn">放大(+)</button>
+                <button id="zoom-out-btn">缩小(-)</button>
+                <button id="reset-zoom-btn">重置</button>
+            </div>
+            <button id="toggle-ai-btn">切换修复版本</button>
+            <span id="page-info"></span>
+        </div>
+        <div class="viewer-main">
+            <div id="image-container">
+                <img id="comic-image" src="" alt="漫画图片">
+            </div>
+            <div id="info-panel" class="info-panel">
+                <h3>本子信息</h3>
+                <div id="info-content">
+                    <!-- 信息将由JS动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script> <!-- 我们将在下面创建这个文件 -->
+</body>
+</html>

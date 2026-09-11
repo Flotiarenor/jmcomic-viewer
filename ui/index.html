@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人数字漫画库</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span>漫画库</span>
+                <button id="sidebar-toggle-btn">☰</button>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active" data-view="library-view">
+                    <span class="icon">📚</span>
+                    <span class="text">漫画库</span>
+                </div>
+                <div class="nav-item" data-view="favorites-view">
+                    <span class="icon">⭐</span>
+                    <span class="text">收藏夹</span>
+                </div>
+                <div class="nav-item" data-view="recent-view">
+                    <span class="icon">🕐</span>
+                    <span class="text">最近阅读</span>
+                </div>
+                <div class="nav-item" data-view="download-view">
+                    <span class="icon">⬇️</span>
+                    <span class="text">下载中心</span>
+                    <span class="nav-badge">0</span>
+                </div>
+                <div class="nav-item" data-view="recommend-view">
+                    <span class="icon">🌐</span>
+                    <span class="text">推荐</span>
+                </div>
+                <div class="nav-item" data-view="user-view">
+                    <span class="icon">👤</span>
+                    <span class="text">用户</span>
+                </div>
+                <div class="nav-item" data-view="settings-view">
+                    <span class="icon">⚙️</span>
+                    <span class="text">设置</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 右侧主内容区 -->
+        <main class="main-content">
+            <!-- 顶部栏 -->
+            <header class="main-header">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="搜索漫画、作者、标签...">
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <div class="content-area">
+                <!-- 漫画库视图 -->
+                <div class="view library-view active" id="library-view">
+                    <aside class="filter-panel">
+                        <h4>标签</h4>
+                        <ul id="tag-list"></ul>
+                        <h4 style="margin-top: 20px;">作者</h4>
+                        <ul id="author-list"></ul>
+                        <h4 style="margin-top: 20px;">阅读状态</h4>
+                        <ul id="status-list"></ul>
+                    </aside>
+                    <div class="manga-grid fixed-grid" id="manga-grid">
+                        <!-- JS 动态生成漫画项 -->
+                    </div>
+                </div>
+
+                <!-- 收藏夹视图 -->
+                <div class="view" id="favorites-view">
+                    <h2>我的收藏</h2>
+                    <div class="manga-grid fixed-grid" id="favorites-grid"></div>
+                </div>
+
+                <!-- 最近阅读视图 -->
+                <div class="view" id="recent-view">
+                    <h2>最近阅读</h2>
+                    <div class="manga-grid fixed-grid" id="recent-grid"></div>
+                </div>
+
+                <!-- 下载中心视图 -->
+                <div class="view" id="download-view">
+                    <h2>下载中心</h2>
+                    <div class="download-list" id="download-list"></div>
+                </div>
+
+                <!-- 推荐视图 -->
+                <div class="view" id="recommend-view">
+                    <h2>为你推荐</h2>
+                    <div class="manga-grid fixed-grid" id="recommend-grid"></div>
+                </div>
+
+                <!-- 用户视图 -->
+                <div class="view" id="user-view">
+                    <div class="user-view">
+                        <h2>用户中心</h2>
+                        <ul>
+                            <li>阅读统计</li>
+                            <li>关于</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 设置视图 -->
+                <div class="view" id="settings-view">
+                    <h2>设置</h2>
+                    <ul>
+                        <li>通用设置</li>
+                        <li>外观与主题</li>
+                        <li>快捷键设置</li>
+                        <li>数据备份</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
